@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+        }
+
+        /* --------- Sidebar --------- */
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background: #1e1f26;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            margin: 8px 0;
+            background: #2c2d35;
+            border-radius: 5px;
+        }
+
+        .sidebar a:hover {
+            background: #3b3c46;
+        }
+
+        /* --------- Main Content --------- */
+        .main {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header h2 {
+            margin: 0;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* Cards */
+        .cards {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            color: #444;
+        }
+
+        .card p {
+            font-size: 26px;
+            margin: 0;
+            font-weight: bold;
+            color: #1e88e5;
+        }
+
+        /* Attendance Table */
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        table th {
+            background: #f0f0f0;
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            margin: 10px 0;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 12px;
+            background: #1e88e5;
+        }
+    </style>
+
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Student Portal</h2>
+        <a href="#">Dashboard</a>
+        <a href="#" style="background:#3b3c46;">Attendance</a>
+        <a href="#">Fee Payment</a>
+        <a href="#">Time Table</a>
+        <a href="#">Events</a>
+        <a href="#">Feedback</a>
+        <a href="#">Profile</a>
+        <a href="#">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <!-- Header -->
+        <div class="header">
+            <h2>Attendance</h2>
+
+            <div class="profile">
+                <img src="https://via.placeholder.com/45" alt="profile">
+                <span>Welcome, Student</span>
+            </div>
+        </div>
+
+        <!-- Attendance Summary Cards -->
+        <div class="cards">
+            <div class="card">
+                <h3>Total Attendance</h3>
+                <p>85%</p>
+            </div>
+            <div class="card">
+                <h3>Classes Attended</h3>
+                <p>42</p>
+            </div>
+            <div class="card">
+                <h3>Total Classes</h3>
+                <p>50</p>
+            </div>
+            <div class="card">
+                <h3>Shortage</h3>
+                <p>8</p>
+            </div>
+        </div>
+
+        <!-- Subject wise Progress -->
+        <div class="section">
+            <h3>Subject-wise Attendance</h3>
+
+            <div class="progress-container">
+                <div class="progress-label">Operating Systems — 88%</div>
+                <div class="progress-bar"><div class="progress" style="width:88%;"></div></div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-label">DBMS — 92%</div>
+                <div class="progress-bar"><div class="progress" style="width:92%;"></div></div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-label">AI / ML — 80%</div>
+                <div class="progress-bar"><div class="progress" style="width:80%;"></div></div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-label">Computer Networks — 75%</div>
+                <div class="progress-bar"><div class="progress" style="width:75%;"></div></div>
+            </div>
+
+        </div>
+
+        <!-- Attendance Table -->
+        <div class="section">
+            <h3>Detailed Attendance Report</h3>
+
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                </tr>
+
+                <tr>
+                    <td>01 Dec 2025</td>
+                    <td>Operating Systems</td>
+                    <td style="color:green;font-weight:bold;">Present</td>
+                </tr>
+                <tr>
+                    <td>01 Dec 2025</td>
+                    <td>DBMS</td>
+                    <td style="color:red;font-weight:bold;">Absent</td>
+                </tr>
+                <tr>
+                    <td>02 Dec 2025</td>
+                    <td>AI/ML</td>
+                    <td style="color:green;font-weight:bold;">Present</td>
+                </tr>
+                <tr>
+                    <td>03 Dec 2025</td>
+                    <td>Computer Networks</td>
+                    <td style="color:green;font-weight:bold;">Present</td>
+                </tr>
+                <tr>
+                    <td>03 Dec 2025</td>
+                    <td>Operating Systems</td>
+                    <td style="color:green;font-weight:bold;">Present</td>
+                </tr>
+
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>

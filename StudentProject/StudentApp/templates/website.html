@@ -1,0 +1,468 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>College Student Portal — Dashboard</title>
+  <link rel="stylesheet" href="{% static 'StudentApp/style.css'}">
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa7b2; --accent:#6c8cff; --accent-2:#7ee787; --glass: rgba(255,255,255,0.03);
+      --success: #2ecc71; --danger:#ff6b6b; --glass-2: rgba(255,255,255,0.04);
+      --radius:14px; --glass-border: rgba(255,255,255,0.04);
+      --shadow: 0 6px 20px rgba(3,8,23,0.6);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071426 0%, #071724 60%);color:#e6eef6}
+
+    /* Layout */
+    .app{display:grid;grid-template-columns:260px 1fr 360px;gap:22px;padding:26px;min-height:100vh}
+    @media (max-width:1100px){.app{grid-template-columns:1fr;grid-auto-rows:auto;padding:16px}}
+
+    /* Sidebar */
+    .sidebar{background:linear-gradient(180deg,var(--card), rgba(6,12,20,0.7));padding:18px;border-radius:16px;box-shadow:var(--shadow);border:1px solid var(--glass-border)}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .logo{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#3b7bff);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .brand h1{font-size:16px;margin:0}
+    .nav{margin-top:12px}
+    .nav a{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;color:var(--muted);text-decoration:none;margin-bottom:6px}
+    .nav a.active, .nav a:hover{background:var(--glass);color:#fff}
+
+    .profile{display:flex;gap:12px;align-items:center;padding:10px;margin-top:12px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent)}
+    .avatar{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent-2),#54d7ff);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .pname{font-size:14px}
+    .small{font-size:12px;color:var(--muted)}
+
+    /* Header */
+    .header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    .search{flex:1;margin-right:12px}
+    .search input{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--glass-border);background:transparent;color:#fff}
+    .actions{display:flex;gap:8px}
+    .btn{padding:10px 12px;border-radius:10px;border:1px solid var(--glass-border);background:transparent;color:#fff;cursor:pointer}
+
+    /* Cards */
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    @media (max-width:1100px){.grid{grid-template-columns:1fr}}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:14px;border-radius:12px;border:1px solid var(--glass-border);box-shadow:0 6px 18px rgba(0,0,0,0.5)}
+    .card h3{margin:0 0 8px 0}
+    .stat{display:flex;align-items:center;justify-content:space-between}
+
+    /* Timetable */
+    .timetable table{width:100%;border-collapse:collapse}
+    .timetable th, .timetable td{padding:8px;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:13px}
+    .timetable th{color:var(--muted);text-align:left}
+
+    /* Calendar */
+    .calendar{display:grid;grid-template-rows:auto 1fr;gap:8px}
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+    .cal-cell{padding:8px;border-radius:8px;background:var(--glass);min-height:64px;font-size:13px}
+    .cal-cell .daynum{font-weight:700}
+    .event-dot{display:inline-block;width:8px;height:8px;border-radius:50%}
+
+    /* Feed */
+    .feed-item{padding:10px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.01), transparent);margin-bottom:10px}
+    .feed-item small{color:var(--muted)}
+
+    /* Courses */
+    .course{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;border:1px solid var(--glass-border);margin-bottom:10px}
+    .progress{height:8px;background:rgba(255,255,255,0.04);border-radius:8px;overflow:hidden}
+    .progress > i{display:block;height:100%}
+
+    /* Chat */
+    .chat-box{display:flex;flex-direction:column;height:260px}
+    .msgs{flex:1;overflow:auto;padding:8px}
+    .msg{padding:8px;border-radius:8px;margin-bottom:8px;max-width:78%}
+    .msg.me{align-self:flex-end;background:linear-gradient(90deg,var(--accent),#4d6cff)}
+    .msg.other{background:var(--glass)}
+    .chat-input{display:flex;gap:8px}
+    .chat-input input{flex:1;padding:10px;border-radius:10px;border:1px solid var(--glass-border);background:transparent;color:#fff}
+
+    /* Footer small */
+    .muted{color:var(--muted);font-size:13px}
+
+    /* Responsive tweaks */
+    @media (max-width:1100px){.header{flex-direction:column;align-items:stretch}.actions{justify-content:flex-end}}
+
+    /* Modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,12,0.6);display:none;align-items:center;justify-content:center}
+    .modal{background:linear-gradient(180deg,#0b1220,#071224);padding:18px;border-radius:12px;width:560px;max-width:96%;border:1px solid var(--glass-border)}
+
+    /* small utilities */
+    .flex{display:flex;align-items:center}
+    .space{flex:1}
+    .pill{padding:6px 10px;border-radius:999px;border:1px solid var(--glass-border);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">CP</div>
+        <div>
+          <h1>College Portal</h1>
+          <div class="small">Student Dashboard</div>
+        </div>
+      </div>
+
+      <div class="profile">
+        <div class="avatar" id="avatar">MA</div>
+        <div>
+          <div class="pname" id="studentName">Mohammed Adam</div>
+          <div class="small" id="studentDept">B.Tech — 3rd Year</div>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="main-navigation">
+        <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
+        <a href="{% url 'attendance'%}"class="active">Attendance</a>
+        <a href="#">Fees</a>
+        <a href="#">Timetable</a>
+        <a href="#">Courses</a>
+        <a href="#">Exams</a>
+        <a href="#">Events</a>
+        <a href="#">Settings</a>
+      </nav>
+
+      <div style="margin-top:12px">
+        <div class="muted">Quick stats</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+          <div class="card" style="padding:10px;text-align:center">
+            <div style="font-size:20px;font-weight:700" id="stat-att">92%</div>
+            <div class="small">Attendance</div>
+          </div>
+          <div class="card" style="padding:10px;text-align:center">
+            <div style="font-size:20px;font-weight:700" id="stat-fee">₹4,200</div>
+            <div class="small">Due</div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+      <div class="header">
+        <div class="search"><input id="globalSearch" placeholder="Search announcements, courses, events..." /></div>
+        <div class="actions">
+          <button class="btn" id="openFeedback">Feedback</button>
+          <button class="btn" id="notifBtn">🔔</button>
+          <button class="btn">Profile</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <h3>Overview</h3>
+          <div class="stat" style="margin-top:8px">
+            <div>
+              <div class="muted">CGPA</div>
+              <div style="font-size:22px;font-weight:700" id="cgpaVal">8.6</div>
+            </div>
+            <div style="text-align:right">
+              <div class="muted">Semester</div>
+              <div style="font-weight:700">6</div>
+            </div>
+          </div>
+
+          <hr style="border:none;border-top:1px dashed rgba(255,255,255,0.03);margin:12px 0" />
+
+          <div style="display:flex;gap:12px;align-items:center">
+            <div style="flex:1">
+              <div class="muted">Remaining Fee</div>
+              <div style="font-weight:700;font-size:18px" id="feeRemaining">₹4,200</div>
+            </div>
+            <div>
+              <button class="btn" id="payFee">Pay Now</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card timetable">
+          <h3>Today's Timetable</h3>
+          <table>
+            <thead>
+              <tr><th>Time</th><th>Course</th><th>Room</th></tr>
+            </thead>
+            <tbody id="ttBody">
+              <!-- filled by JS -->
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card">
+          <h3>Announcements</h3>
+          <div id="feedArea">
+            <!-- feed items -->
+          </div>
+        </section>
+
+        <section class="card calendar">
+          <h3>Events Calendar</h3>
+          <div id="monthLabel" class="muted small"></div>
+          <div class="calendar-grid" id="calendarGrid">
+            <!-- days -->
+          </div>
+        </section>
+      </div>
+
+      <div style="height:16px"></div>
+
+      <div class="grid">
+        <section class="card" style="grid-column:1/3">
+          <h3>Learning Management</h3>
+          <div style="display:flex;gap:12px;margin-top:8px">
+            <div style="flex:1">
+              <div class="muted">Active Courses</div>
+              <div id="coursesList" style="margin-top:8px">
+                <!-- courses -->
+              </div>
+            </div>
+            <div style="width:220px">
+              <div class="muted">Exam Summary</div>
+              <div style="margin-top:8px" id="examSummary">
+                <!-- cgpa chart -->
+                <canvas id="cgpaChart" width="200" height="120"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>Feedback & Quick Links</h3>
+          <div style="margin-top:8px"><button class="btn" id="openFeedback2">Give Feedback</button></div>
+          <div style="margin-top:12px">
+            <a class="pill" href="#">Library</a> <a class="pill" href="#">Hostel</a> <a class="pill" href="#">Transport</a>
+          </div>
+        </section>
+      </div>
+
+    </main>
+
+    <!-- RIGHT COLUMN -->
+    <aside>
+      <div class="card">
+        <h3>Courses</h3>
+        <div id="rightCourses" style="margin-top:8px">
+          <!-- course quick list -->
+        </div>
+      </div>
+
+      <div style="height:14px"></div>
+
+      <div class="card">
+        <h3>College Chat</h3>
+        <div class="chat-box">
+          <div class="msgs" id="msgs"></div>
+          <div class="chat-input">
+            <input id="chatInput" placeholder="Type message..." />
+            <button class="btn" id="sendChat">Send</button>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <h3>Send Feedback</h3>
+      <p class="muted">Tell us what can be improved — short and precise.</p>
+      <div style="margin-top:8px">
+        <input id="fbSubject" placeholder="Subject" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--glass-border);background:transparent;color:#fff" />
+      </div>
+      <div style="margin-top:8px">
+        <textarea id="fbBody" rows="6" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--glass-border);background:transparent;color:#fff"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">
+        <button class="btn" id="closeModal">Cancel</button>
+        <button class="btn" id="sendFeedback">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ---------------- Sample Data ----------------- */
+    const student = {name: 'Mohammed Adam', dept: 'B.Tech — 3rd Year', avatar: 'MA', cgpa: 8.6, sem:6, feeDue:4200, attendance:92}
+    const timetable = [
+      {time:'09:00 - 10:00', course:'Data Structures', room:'A-102'},
+      {time:'10:15 - 11:15', course:'DBMS', room:'B-204'},
+      {time:'11:30 - 12:30', course:'Computer Networks', room:'C-301'},
+      {time:'02:00 - 03:00', course:'OS Lab', room:'L-02'}
+    ]
+    const announcements = [
+      {title:'Guest Lecture on AI — Nov 30', body:'A guest lecture by Dr. S. Rao on "AI in Industry" at 3 PM in Seminar Hall.', time:'2 days ago'},
+      {title:'Library Notice', body:'New books for CSE 3rd year have arrived. Check the library portal.', time:'5 days ago'},
+      {title:'Fee Reminder', body:'Second installment due by Dec 10. Please clear dues to avoid hold on registrations.', time:'1 week ago'}
+    ]
+    const events = [
+      {dateOffset:2,label:'Workshop: Web UI'},
+      {dateOffset:6,label:'Sports Meet'},
+      {dateOffset:12,label:'Cultural Fest'}
+    ]
+    const courses = [
+      {code:'CS301',title:'Data Structures',progress:86},
+      {code:'CS304',title:'DBMS',progress:72},
+      {code:'CS307',title:'Computer Networks',progress:58},
+      {code:'CS350',title:'Operating Systems',progress:91}
+    ]
+    const examHistory = [7.8,8.1,8.3,8.6]
+
+    /* --------------- UI Population ---------------- */
+    document.getElementById('studentName').textContent = student.name
+    document.getElementById('studentDept').textContent = student.dept
+    document.getElementById('avatar').textContent = student.avatar
+    document.getElementById('cgpaVal').textContent = student.cgpa
+    document.getElementById('stat-att').textContent = student.attendance + '%'
+    document.getElementById('stat-fee').textContent = '₹' + student.feeDue
+    document.getElementById('feeRemaining').textContent = '₹' + student.feeDue
+
+    // Timetable
+    const ttBody = document.getElementById('ttBody');
+    timetable.forEach(r=>{
+      const tr = document.createElement('tr')
+      tr.innerHTML = `<td>${r.time}</td><td>${r.course}</td><td>${r.room}</td>`
+      ttBody.appendChild(tr)
+    })
+
+    // Announcements
+    const feedArea = document.getElementById('feedArea')
+    announcements.forEach(a=>{
+      const div = document.createElement('div'); div.className='feed-item'
+      div.innerHTML = `<strong>${a.title}</strong><div class="small">${a.time}</div><p style="margin:6px 0">${a.body}</p>`
+      feedArea.appendChild(div)
+    })
+
+    // Courses
+    function renderCourses(){
+      const out = document.getElementById('coursesList')
+      out.innerHTML=''
+      courses.forEach(c=>{
+        const el = document.createElement('div'); el.className='course'
+        el.innerHTML = `<div><strong>${c.code}</strong><div class="small">${c.title}</div></div><div style="width:140px"><div class="progress"><i style="width:${c.progress}% ; background:linear-gradient(90deg,var(--accent),#3bb0ff)"></i></div><div class="small" style="margin-top:6px;text-align:right">${c.progress}%</div></div>`
+        out.appendChild(el)
+      })
+    }
+    renderCourses()
+
+    // Right column short list
+    const rightCourses = document.getElementById('rightCourses')
+    courses.slice(0,4).forEach(c=>{
+      const d = document.createElement('div'); d.className='feed-item'
+      d.innerHTML = `<strong>${c.title}</strong><div class="small">${c.code}</div>`
+      rightCourses.appendChild(d)
+    })
+
+    // Calendar
+    function makeCalendar(){
+      const grid = document.getElementById('calendarGrid')
+      grid.innerHTML=''
+      const now = new Date()
+      const year = now.getFullYear(), month = now.getMonth()
+      document.getElementById('monthLabel').textContent = now.toLocaleString('default',{month:'long',year:'numeric'})
+      const first = new Date(year,month,1)
+      const start = first.getDay() // 0..6 (Sun..Sat)
+      const days = new Date(year,month+1,0).getDate()
+      const totalCells = Math.ceil((start + days)/7)*7
+      for(let i=0;i<totalCells;i++){
+        const cell = document.createElement('div'); cell.className='cal-cell'
+        const dayNum = i - start + 1
+        if(i >= start && dayNum <= days){
+          cell.innerHTML = `<div class="daynum">${dayNum}</div>`
+          // mark events if any match offset
+          events.forEach(ev=>{
+            if(ev.dateOffset === dayNum - now.getDate()){
+              const dot = document.createElement('div'); dot.className='event-dot'; dot.style.background = 'linear-gradient(90deg,var(--accent),#3bb0ff)'; dot.title = ev.label
+              cell.appendChild(document.createElement('br'))
+              cell.appendChild(dot)
+              const lbl = document.createElement('div'); lbl.className='small'; lbl.textContent = ev.label; cell.appendChild(lbl)
+            }
+          })
+        } else { cell.style.visibility='hidden' }
+        grid.appendChild(cell)
+      }
+    }
+    makeCalendar()
+
+    // CGPA mini chart
+    function drawCgpa(){
+      const c = document.getElementById('cgpaChart')
+      const ctx = c.getContext('2d')
+      ctx.clearRect(0,0,c.width,c.height)
+      const padding = 18
+      const w = c.width - padding*2
+      const h = c.height - padding*2
+      const max = Math.max(...examHistory,10)
+      const step = w / (examHistory.length)
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)'
+      ctx.beginPath()
+      for(let i=0;i<examHistory.length;i++){
+        const x = padding + i*step + step/2
+        const y = padding + h - (examHistory[i]/max)*h
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y)
+        // dot
+        ctx.fillStyle = 'white'
+        ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill()
+      }
+      ctx.stroke()
+    }
+    drawCgpa()
+
+    // Chat
+    const msgs = document.getElementById('msgs')
+    function addMsg(text,who='other'){
+      const d = document.createElement('div'); d.className='msg '+(who==='me'?'me':'other')
+      d.textContent = text; msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight
+    }
+    addMsg('Welcome to the college portal! Feel free to explore announcements and courses.')
+
+    document.getElementById('sendChat').addEventListener('click', ()=>{
+      const t = document.getElementById('chatInput').value.trim(); if(!t) return
+      addMsg(t,'me'); document.getElementById('chatInput').value=''
+      setTimeout(()=>addMsg('Admin: Thanks, we will respond soon.'),900)
+    })
+
+    // Feedback modal
+    const modal = document.getElementById('modalBackdrop')
+    document.getElementById('openFeedback').addEventListener('click', ()=>modal.style.display='flex')
+    document.getElementById('openFeedback2').addEventListener('click', ()=>modal.style.display='flex')
+    document.getElementById('closeModal').addEventListener('click', ()=>modal.style.display='none')
+    document.getElementById('sendFeedback').addEventListener('click', ()=>{
+      const s = document.getElementById('fbSubject').value, b = document.getElementById('fbBody').value
+      if(!s||!b) { alert('Please provide subject & message.'); return }
+      // here you'd send to server
+      alert('Feedback submitted. Thank you!')
+      document.getElementById('fbSubject').value=''; document.getElementById('fbBody').value=''
+      modal.style.display='none'
+    })
+
+    // Pay fee (simulated)
+    document.getElementById('payFee').addEventListener('click', ()=>{
+      if(confirm('Proceed to pay ₹'+student.feeDue+'? (This is a demo)')){
+        alert('Payment successful — thank you!')
+        student.feeDue = 0; document.getElementById('feeRemaining').textContent = '₹0'; document.getElementById('stat-fee').textContent='₹0'
+      }
+    })
+
+    // Search (simple)
+    document.getElementById('globalSearch').addEventListener('input', e=>{
+      const q = e.target.value.toLowerCase()
+      const feed = document.getElementById('feedArea').children
+      for(const item of feed){ item.style.display = item.textContent.toLowerCase().includes(q)?'block':'none' }
+    })
+
+    // small demo: update calendar day highlights around current day
+    (function markToday(){
+      const today = new Date().getDate(); const nodes = document.querySelectorAll('.cal-cell')
+      nodes.forEach(n=>{ const dn = n.querySelector('.daynum'); if(dn && +dn.textContent===today){ n.style.border='1px solid rgba(124, 171, 255,0.25)'; n.style.boxShadow='0 6px 18px rgba(63, 114, 255,0.08)'} })
+    })()
+
+    // small accessibility: close modal on ESC
+    window.addEventListener('keydown', e=>{ if(e.key==='Escape') modal.style.display='none' })
+
+  </script>
+</body>
+</html>
